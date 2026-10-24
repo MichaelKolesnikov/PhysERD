@@ -1,0 +1,4 @@
+/PhysERD.pro.user
+*build/*
+*.pro.user*
+/v/*

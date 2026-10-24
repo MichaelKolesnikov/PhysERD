@@ -1,0 +1,128 @@
+<html>
+<head>
+<style>
+  body { font-family: sans-serif; }
+  h2 { margin-top: 18px; margin-bottom: 4px; }
+  pre { background: rgba(127,127,127,0.12); padding: 8px; font-family: monospace; }
+  td { padding: 2px 10px 2px 0; vertical-align: top; }
+  code { font-family: monospace; }
+</style>
+</head>
+<body>
+<h1>DBML quick reference</h1>
+<p>DBML (Database Markup Language) describes a database structure. The diagram follows the text as you type.</p>
+
+<h2>Tables and columns</h2>
+<pre>Table schema.table_name as alias [headercolor: #3498db, note: '...'] {
+  column_name column_type [column settings]
+  id integer [pk, increment]
+  email varchar(255) [not null, unique, note: 'Login']
+  created_at timestamp [default: `now()`]
+  "full name" "character varying"(100)
+  Note: 'Table note'
+}</pre>
+<table>
+<tr><td><code>pk</code> or <code>primary key</code></td><td>primary key</td></tr>
+<tr><td><code>not null</code> / <code>null</code></td><td>nullability</td></tr>
+<tr><td><code>unique</code></td><td>unique value</td></tr>
+<tr><td><code>increment</code></td><td>auto increment</td></tr>
+<tr><td><code>default: value</code></td><td><code>'text'</code>, <code>123</code>, <code>-1.5</code>, <code>true</code>, <code>false</code>, <code>null</code> or <code>`expression`</code></td></tr>
+<tr><td><code>note: 'text'</code></td><td>column note</td></tr>
+<tr><td><code>ref: &gt; table.column</code></td><td>inline relationship</td></tr>
+</table>
+
+<h2>Relationships</h2>
+<table>
+<tr><td><code>&lt;</code></td><td>one-to-many</td></tr>
+<tr><td><code>&gt;</code></td><td>many-to-one</td></tr>
+<tr><td><code>-</code></td><td>one-to-one</td></tr>
+<tr><td><code>&lt;&gt;</code></td><td>many-to-many</td></tr>
+</table>
+<pre>Ref name_optional: posts.user_id &gt; users.id [delete: cascade, update: no action, color: #79ad51]
+
+Ref {
+  orders.user_id &gt; users.id
+}
+
+// composite foreign key
+Ref: merchant_periods.(merchant_id, country_code) &gt; merchants.(id, country_code)
+
+// inline
+Table posts {
+  user_id integer [ref: &gt; users.id]
+}</pre>
+<p>Actions for <code>delete</code> and <code>update</code>: <code>cascade</code>, <code>restrict</code>, <code>set null</code>, <code>set default</code>, <code>no action</code>.</p>
+
+<h2>Indexes</h2>
+<pre>Table bookings {
+  id integer
+  country varchar
+  booking_date date
+
+  indexes {
+    (id, country) [pk]                          // composite primary key
+    booking_date [name: 'date_index', type: hash]
+    (country, booking_date) [unique]
+    `lower(country)`                            // expression
+  }
+}</pre>
+
+<h2>Enums</h2>
+<pre>Enum job_status {
+  created [note: 'Waiting to be processed']
+  running
+  "with space"
+}
+
+Table jobs {
+  status job_status
+}</pre>
+
+<h2>Table groups and partials</h2>
+<pre>TableGroup billing [color: #27ae60] {
+  invoices
+  payments
+  Note: 'Everything about money'
+}
+
+TablePartial timestamps {
+  created_at timestamp [default: `now()`]
+  updated_at timestamp
+}
+
+Table invoices {
+  id int [pk]
+  ~timestamps
+}</pre>
+
+<h2>Project and sticky notes</h2>
+<pre>Project shop {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # Shop database
+    Several lines are written between triple quotes.
+  '''
+}
+
+Note todo {
+  'Add the shipping tables'
+}</pre>
+
+<h2>Comments</h2>
+<pre>// a line comment
+/* a block
+   comment */</pre>
+
+<h2>Using the diagram</h2>
+<table>
+<tr><td>Drag a table or a group header</td><td>move it; the positions are saved in <i>name.layout.json</i></td></tr>
+<tr><td>Drag the empty canvas, middle button, Space + drag</td><td>pan</td></tr>
+<tr><td>Ctrl + wheel, pinch</td><td>zoom</td></tr>
+<tr><td>Shift + drag on the canvas</td><td>select several tables</td></tr>
+<tr><td>Click a table, a column or a line</td><td>show its definition in the editor</td></tr>
+<tr><td>Double-click an enum type</td><td>go to the enum</td></tr>
+<tr><td>Right-click a table</td><td>change its header color</td></tr>
+<tr><td>Ctrl+Z on the diagram</td><td>undo a move or an arrangement</td></tr>
+</table>
+</body>
+</html>

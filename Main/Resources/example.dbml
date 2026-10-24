@@ -1,0 +1,84 @@
+// An online shop: customers place orders of products.
+// Drag the tables around, hover a column to see its relationships,
+// click a table to jump to its definition.
+
+Project shop {
+  database_type: 'PostgreSQL'
+  Note: 'Example schema of PhysERD'
+}
+
+Enum order_status {
+  created [note: 'Waiting for payment']
+  paid
+  shipped
+  delivered
+  cancelled
+}
+
+Table users as U [headercolor: #2d6a4f] {
+  id integer [pk, increment]
+  email varchar(255) [not null, unique]
+  full_name varchar
+  country_code int
+  created_at timestamp [default: `now()`]
+
+  Note: 'Registered customers'
+}
+
+Table countries {
+  code int [pk]
+  name varchar [not null]
+  continent_name varchar
+}
+
+Table merchants {
+  id int [pk]
+  merchant_name varchar
+  country_code int [ref: > countries.code]
+  admin_id int [ref: > U.id]
+  created_at timestamp
+}
+
+Table products {
+  id int [pk]
+  name varchar [not null]
+  merchant_id int [not null, ref: > merchants.id]
+  price decimal(10, 2) [default: 0]
+  status varchar [note: 'in stock, out of stock, running low']
+  created_at timestamp [default: `now()`]
+
+  indexes {
+    (merchant_id, status) [name: 'product_status']
+    id [unique]
+  }
+}
+
+Table orders [headercolor: #b5651d] {
+  id int [pk, increment]
+  user_id int [not null, unique]
+  status order_status [default: 'created']
+  created_at timestamp [note: 'When the order was placed']
+}
+
+Table order_items {
+  order_id int [ref: > orders.id]
+  product_id int
+  quantity int [default: 1]
+
+  indexes {
+    (order_id, product_id) [pk]
+  }
+}
+
+Ref: order_items.product_id > products.id [delete: cascade]
+Ref: users.country_code > countries.code
+Ref: orders.user_id > users.id
+
+TableGroup catalog [color: #2980b9] {
+  products
+  merchants
+}
+
+Note shipping {
+  'Shipping is handled by an external service: orders only keep their status.'
+}

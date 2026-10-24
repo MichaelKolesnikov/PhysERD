@@ -1,0 +1,12 @@
+QT += testlib core
+QT -= gui
+
+CONFIG += qt console warn_on depend_includepath testcase
+CONFIG -= app_bundle
+
+TEMPLATE = app
+
+include($$PWD/../../../Core/Core.pri)
+
+SOURCES += \
+    tst_SqlExporterTestCase.cpp

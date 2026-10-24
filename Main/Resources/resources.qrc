@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="example.dbml">example.dbml</file>
+        <file alias="reference.html">reference.html</file>
+        <file>icons/app.svg</file>
+        <file>icons/new.svg</file>
+        <file>icons/open.svg</file>
+        <file>icons/save.svg</file>
+        <file>icons/undo.svg</file>
+        <file>icons/redo.svg</file>
+        <file>icons/arrange.svg</file>
+        <file>icons/fit.svg</file>
+        <file>icons/zoom-in.svg</file>
+        <file>icons/zoom-out.svg</file>
+        <file>icons/fields.svg</file>
+        <file>icons/import.svg</file>
+        <file>icons/export.svg</file>
+    </qresource>
+</RCC>
